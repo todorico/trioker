@@ -12,6 +12,7 @@ import utils.go.Piece;
 import utils.go.Point;
 
 public class Main {
+	
 
 	public static void main(String s[]) {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
