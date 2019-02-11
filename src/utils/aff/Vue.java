@@ -32,6 +32,7 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener{
 	private List<Vecteur> aretes;
 	
 	private List<Piece> alPieces;
+	Piece draggedPieceInitial, draggedPiecePrevious;
 
 	public Vue(int width, int height, String fileName, List<Piece> pieces) {
 		super();
@@ -49,8 +50,12 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener{
 		this.setPreferredSize(new Dimension(width, width));
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
-		this.alPieces = pieces;
+		
 		this.initFromLog(fileName);
+		
+		this.alPieces = pieces;
+		draggedPieceInitial = null;
+		draggedPiecePrevious = null;
 	}
 
 	private void initFromLog(String fileName) {
@@ -96,6 +101,13 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener{
 		
 	}
 
+	private Piece getPieceSelected(int x, int y) {
+		for (Piece piece : alPieces)
+			if (piece.isSelected(x, y))
+				return piece;
+		return null;
+	}
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
@@ -109,44 +121,25 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener{
 	}
 
 	@Override
-	public void mousePressed(MouseEvent e) {
-		initialLocation = new Point(e.getX(), e.getY());
-		rectangleElastique = new Rectangle (e.getX(), e.getY(), 0, 0);
-		previousLocation = new Point(e.getX(), e.getY());
+	public void mousePressed(MouseEvent e) {		
+		this.draggedPieceInitial = this.getPieceSelected(e.getX(), e.getY());
+		this.draggedPiecePrevious = this.draggedPieceInitial;
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		updateElasticRectangle(e.getX(), e.getY());
-		previousLocation = null;
-		initialLocation = null;
-	}
-
-	private void updateElasticRectangle(int newX, int newY) {
-		int w = newX - initialLocation.x;
-		int h = newY - initialLocation.y;
-		previousLocation.x = newX;
-		previousLocation.y = newY;		
-
-		rectangleElastique.width = (w >=0)? w: -w;
-		rectangleElastique.height = (h >=0)? h: -h;
-
-		if (h < 0) {
-			rectangleElastique.y = initialLocation.y +h;
-		}
-
-		if (w < 0) {
-			rectangleElastique.x = initialLocation.x +w;
-		}
-
+		//TODO: last update
+		this.draggedPieceInitial = null;
+		this.draggedPiecePrevious = null;
 		repaint();
 	}
 
-
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		if (previousLocation != null) {
-			updateElasticRectangle(e.getX(), e.getY());
+		if (this.draggedPieceInitial != null) {
+			//TODO: create update
+			// On calcule un vecteur de déplacement entre la position précédente et la nouvelle
+			repaint();
 		}
 	}
 

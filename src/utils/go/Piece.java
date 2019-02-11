@@ -70,6 +70,8 @@ public class Piece {
 				break;
 			case 3:
 				afficherPoint(g2d, pHaut.x, pHaut.y + 16);
+				afficherPoint(g2d, pHaut.x - 6, pHaut.y + 26);
+				afficherPoint(g2d, pHaut.x + 6, pHaut.y + 26);
 				break;
 		}
 		
@@ -84,6 +86,8 @@ public class Piece {
 				break;
 			case 3:
 				afficherPoint(g2d, pGauche.x + 16, pGauche.y - 8);
+				afficherPoint(g2d, pGauche.x + 22, pGauche.y - 18);
+				afficherPoint(g2d, pGauche.x + 28, pGauche.y - 8);
 				break;
 		}
 		
@@ -98,6 +102,8 @@ public class Piece {
 				break;
 			case 3:
 				afficherPoint(g2d, pDroite.x - 16, pDroite.y - 8);
+				afficherPoint(g2d, pDroite.x - 22, pDroite.y - 18);
+				afficherPoint(g2d, pDroite.x - 28, pDroite.y - 8);
 				break;
 		}
 		
@@ -113,5 +119,12 @@ public class Piece {
 		Point center = this.center();
 		int centeredText = (int) (center.x - fm.stringWidth(labelStr) / 2);
 		g2d.drawString(labelStr, centeredText, (int) (center.y + 5)); // - midWidth - fm.getDescent()
+	}
+
+	public boolean isSelected(int x, int y) {
+		if (!isReversed)
+			return (y <= this.pHaut.y && y >= this.pGauche.y) && (x >= this.pGauche.x && x <= this.pDroite.x);
+		else
+			return (y >= this.pHaut.y && y <= this.pGauche.y) && (x >= this.pGauche.x && x <= this.pDroite.x);
 	}
 }
