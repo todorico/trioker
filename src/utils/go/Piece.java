@@ -2,11 +2,11 @@ package utils.go;
 
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.geom.Ellipse2D;
 
 public class Piece {
+	
+	private static int pointMidSize = 3;
 	
 	private Point pGauche, pDroite, pHaut;
 	private int labelGauche, labelDroite, labelHaut;
@@ -37,6 +37,7 @@ public class Piece {
 	}
 
 	public void dessine(Graphics2D g2d) {
+		//Affichage triangle
 		Vecteur v1 = new Vecteur(this.pGauche, this.pDroite);
 		Vecteur v2 = new Vecteur(this.pDroite, this.pHaut);
 		Vecteur v3 = new Vecteur(this.pHaut, this.pGauche);
@@ -44,7 +45,66 @@ public class Piece {
 		v2.dessine(g2d);
 		v3.dessine(g2d);
 
+		//Affichage points
+		dessinePoints(g2d);
+		
+		//Affichage label
 		drawLabel(g2d);
+	}
+
+	private void dessinePoints(Graphics2D g2d) {
+		
+		//0 : ne rien faire
+
+//		Point p1 = new Point(pHaut.x, pHaut.y + 20);
+//		p1.dessine(g2d);
+		
+		//Points Haut
+		switch (labelHaut) {
+			case 1:
+				afficherPoint(g2d, pHaut.x, pHaut.y + 16);
+				break;
+			case 2:
+				afficherPoint(g2d, pHaut.x, pHaut.y + 16);
+				afficherPoint(g2d, pHaut.x, pHaut.y + 26);
+				break;
+			case 3:
+				afficherPoint(g2d, pHaut.x, pHaut.y + 16);
+				break;
+		}
+		
+		//Points Gauche
+		switch (labelGauche) {
+			case 1:
+				afficherPoint(g2d, pGauche.x + 16, pGauche.y - 8);
+				break;
+			case 2:
+				afficherPoint(g2d, pGauche.x + 16, pGauche.y - 8);
+				afficherPoint(g2d, pGauche.x + 26, pGauche.y - 14);
+				break;
+			case 3:
+				afficherPoint(g2d, pGauche.x + 16, pGauche.y - 8);
+				break;
+		}
+		
+		//Points Droite
+		switch (labelDroite) {
+			case 1:
+				afficherPoint(g2d, pDroite.x - 16, pDroite.y - 8);
+				break;
+			case 2:
+				afficherPoint(g2d, pDroite.x - 16, pDroite.y - 8);
+				afficherPoint(g2d, pDroite.x - 26, pDroite.y - 14);
+				break;
+			case 3:
+				afficherPoint(g2d, pDroite.x - 16, pDroite.y - 8);
+				break;
+		}
+		
+	}
+
+	private void afficherPoint(Graphics2D g2d, double x, double y) {
+		g2d.fill(new Ellipse2D.Double(x - pointMidSize, y - pointMidSize, 2*pointMidSize, 2*pointMidSize));
 	}
 
 	public void drawLabel(Graphics2D g2d) {

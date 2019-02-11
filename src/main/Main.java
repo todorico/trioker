@@ -16,7 +16,7 @@ public class Main {
 	public static void main(String s[]) {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				int x = 10, y = 10, w = 1200, h = 600;
+				int x = 10, y = 10, w = 800, h = 600;
 				String fileNamePuzzle = "puzzle.csv";
 				JFrame frame = new JFrame("Transformations dans le plan");
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -37,12 +37,17 @@ public class Main {
 				Point p1 = new Point(100, 50);
 				Point p2 = new Point(50, 136);
 				Point p3 = new Point(150, 136);
-				alPieces.add(new Piece(p2, p3, p1, 0, 0, 0));
+				alPieces.add(new Piece(p2, p3, p1, 1, 1, 1));
 				
-				Point p1Bis = new Point(500, 136);
-				Point p2Bis = new Point(450, 50);
-				Point p3Bis = new Point(550, 50);
-				alPieces.add(new Piece(p2Bis, p3Bis, p1Bis, 0, 0, 0));
+				p1 = new Point(200, 50);
+				p2 = new Point(150, 136);
+				p3 = new Point(250, 136);
+				alPieces.add(new Piece(p2, p3, p1, 2, 2, 2));
+				
+				p1 = new Point(300, 50);
+				p2 = new Point(250, 136);
+				p3 = new Point(350, 136);
+				alPieces.add(new Piece(p2, p3, p1, 3, 3, 3));
 				
 				return alPieces;
 				
