@@ -3,7 +3,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
@@ -13,10 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import utils.go.Piece;
+import utils.go.Point;
 import utils.go.PointVisible;
 import utils.go.Vecteur;
+import utils.go.VecteurVisible;
 import utils.io.ReadWritePoint;
 
 
@@ -29,10 +31,10 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener{
 	Rectangle rectangleElastique;
 	
 	private List<PointVisible> points;
-	private List<Vecteur> aretes;
+	private List<VecteurVisible> aretes;
 	
 	private List<Piece> alPieces;
-	Piece draggedPieceInitial, draggedPiecePrevious;
+	Piece draggedPiece;
 
 	public Vue(int width, int height, String fileName, List<Piece> pieces) {
 		super();
@@ -54,17 +56,16 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener{
 		this.initFromLog(fileName);
 		
 		this.alPieces = pieces;
-		draggedPieceInitial = null;
-		draggedPiecePrevious = null;
+		draggedPiece = null;
 	}
 
 	private void initFromLog(String fileName) {
 		ReadWritePoint rw = new ReadWritePoint(fileName);
 		points = rw.read();
-		aretes = new ArrayList<Vecteur>();
+		aretes = new ArrayList<VecteurVisible>();
 		int n = points.size();
 		for (int i = 0 ; i < n; i++) {
-			aretes.add(new Vecteur(points.get(i), points.get((i+1)%n)));
+			aretes.add(new VecteurVisible(points.get(i), points.get((i+1)%n)));
 		}
 	}
 
@@ -90,7 +91,7 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener{
 		if (rectangleElastique != null)
 			g2d.draw(rectangleElastique);
 		
-		for (Vecteur v: aretes)
+		for (VecteurVisible v: aretes)
 			v.dessine(g2d);
 		
 		for (PointVisible p : points)
@@ -109,43 +110,64 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener{
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
+	public void mousePressed(MouseEvent e) {
+		
+		if (SwingUtilities.isLeftMouseButton(e))
+			this.rightMouseButtonPressed(e);
+		
+		if (SwingUtilities.isRightMouseButton(e))
+			this.leftMouseButtonPressed(e);
 	}
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
+	
+	private void rightMouseButtonPressed(MouseEvent e) {
+		this.draggedPiece = this.getPieceSelected(e.getX(), e.getY());
+		this.initialLocation = new Point(e.getX(), e.getY());
 	}
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {		
-		this.draggedPieceInitial = this.getPieceSelected(e.getX(), e.getY());
-		this.draggedPiecePrevious = this.draggedPieceInitial;
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		//TODO: last update
-		this.draggedPieceInitial = null;
-		this.draggedPiecePrevious = null;
+	
+	//Modifier l'appel de rotate si besoin
+	private void leftMouseButtonPressed(MouseEvent e) {
+		Piece pieceSelected = this.getPieceSelected(e.getX(), e.getY());
+		pieceSelected.rotateLeft();
 		repaint();
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		if (this.draggedPieceInitial != null) {
-			//TODO: create update
-			// On calcule un vecteur de déplacement entre la position précédente et la nouvelle
+		if (this.draggedPiece != null) {
+			this.newLocation = new Point(e.getX(), e.getY());
+			this.deplacerPiece();
 			repaint();
 		}
 	}
+	
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if (this.draggedPiece != null) {
+			this.newLocation = new Point(e.getX(), e.getY());
+			this.deplacerPiece();
+			this.draggedPiece = null;
+			repaint();
+		}
+	}
+	
+	private void deplacerPiece() {
+		Vecteur translation = new Vecteur(this.initialLocation, this.newLocation);
+		this.draggedPiece.translater(translation);
+		this.initialLocation = this.newLocation;
+	}
+	
+	@Override
+	public void mouseClicked(MouseEvent e) {}
 
 	@Override
-	public void mouseMoved(MouseEvent e) {
-	}
+	public void mouseEntered(MouseEvent e) {}
+
+	@Override
+	public void mouseExited(MouseEvent e) {}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {}
+	
 }
 
 

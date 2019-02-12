@@ -38,9 +38,9 @@ public class Piece {
 
 	public void dessine(Graphics2D g2d) {
 		//Affichage triangle
-		Vecteur v1 = new Vecteur(this.pGauche, this.pDroite);
-		Vecteur v2 = new Vecteur(this.pDroite, this.pHaut);
-		Vecteur v3 = new Vecteur(this.pHaut, this.pGauche);
+		VecteurVisible v1 = new VecteurVisible(this.pGauche, this.pDroite);
+		VecteurVisible v2 = new VecteurVisible(this.pDroite, this.pHaut);
+		VecteurVisible v3 = new VecteurVisible(this.pHaut, this.pGauche);
 		v1.dessine(g2d);
 		v2.dessine(g2d);
 		v3.dessine(g2d);
@@ -56,7 +56,7 @@ public class Piece {
 		
 		//0 : ne rien faire
 
-//		Point p1 = new Point(pHaut.x, pHaut.y + 20);
+//		Point p1 = new Point(pHaut.x, pHaut.y + 16);
 //		p1.dessine(g2d);
 		
 		//Points Haut
@@ -122,9 +122,21 @@ public class Piece {
 	}
 
 	public boolean isSelected(int x, int y) {
-		if (!isReversed)
-			return (y <= this.pHaut.y && y >= this.pGauche.y) && (x >= this.pGauche.x && x <= this.pDroite.x);
-		else
-			return (y >= this.pHaut.y && y <= this.pGauche.y) && (x >= this.pGauche.x && x <= this.pDroite.x);
+		if ( !(x >= this.pGauche.x && x <= this.pDroite.x) ) {
+			return false;
+			
+		}else {
+			if (!isReversed)
+				return (y >= this.pHaut.y && y <= this.pGauche.y);
+			else
+				return (y <= this.pHaut.y && y >= this.pGauche.y);
+		}
 	}
+	
+	public void translater(Vecteur v) {
+		this.pHaut.translater(v);
+		this.pGauche.translater(v);
+		this.pDroite.translater(v);
+	}
+	
 }
