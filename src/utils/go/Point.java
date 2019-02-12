@@ -20,4 +20,14 @@ public class Point {
 		return new PointVisible(x, y);
 	}
 	
+	public void translater(Vecteur v) {
+		this.x += v.x;
+		this.y += v.y;
+	}
+	
+	@Override
+	public String toString() {
+		return "X : " + x + " | Y : " + y;
+	}
+	
 }
