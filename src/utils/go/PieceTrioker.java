@@ -8,17 +8,17 @@ public class PieceTrioker extends TriangleEqui {
 	
 	private static int pointMidSize = 3;
 	
-	private int leftLabel, rightLabel, upLabel;
+	public int leftLabel, rightLabel, upLabel;
 	private boolean isReversed = false;
 
-	public PieceTrioker(Point2 center, double rayon, int leftLabel, int rightLabel, int upLabel) {
+	public PieceTrioker(Point center, double rayon, int leftLabel, int rightLabel, int upLabel) {
 		super(center, rayon);
 		this.leftLabel = leftLabel;
 		this.rightLabel = rightLabel;
 		this.upLabel = upLabel;
 	}
 	
-	public PieceTrioker(Point2 left, Point2 right, Point2 up, int leftLabel, int rightLabel, int upLabel) {
+	public PieceTrioker(Point left, Point right, Point up, int leftLabel, int rightLabel, int upLabel) {
 		super(left, right, up);
 		this.leftLabel = leftLabel;
 		this.rightLabel = rightLabel;
@@ -35,13 +35,12 @@ public class PieceTrioker extends TriangleEqui {
 	
 	public void reverse() {
 		
-		Vector2 direction = new Vector2(0, 0);
+		Vector direction = new Vector(0, 0);
 		
-		if (!isReversed()) {
-			direction.add(Vector2.multiplication(Vector2.up, -this.radius()/2));
-		} else {
-			direction.add(Vector2.multiplication(Vector2.down, -this.radius()/2));
-		}
+		if (!isReversed())
+			direction.add(Vector.multiplication(Vector.up, this.radius()/2));
+		else
+			direction.add(Vector.multiplication(Vector.down, this.radius()/2));
 		
 		translate(direction);
 		
@@ -64,18 +63,18 @@ public class PieceTrioker extends TriangleEqui {
 		
 		// Vecteurs de direction vers le centre
 		
-		Vector2 upToCenter = new Vector2(up, center()).normalize();
-		Vector2 leftToCenter = new Vector2(left, center()).normalize();
-		Vector2 rightToCenter = new Vector2(right, center()).normalize();
+		Vector upToCenter = new Vector(up, center()).normalize();
+		Vector leftToCenter = new Vector(left, center()).normalize();
+		Vector rightToCenter = new Vector(right, center()).normalize();
 				
-		Vector2 upToLeft = new Vector2(up, left).normalize();
-		Vector2 upToRight = new Vector2(up, right).normalize();
+		Vector upToLeft = new Vector(up, left).normalize();
+		Vector upToRight = new Vector(up, right).normalize();
 	
-		Vector2 leftToUp = new Vector2(left, up).normalize();
-		Vector2 leftToRight = new Vector2(left, right).normalize();
+		Vector leftToUp = new Vector(left, up).normalize();
+		Vector leftToRight = new Vector(left, right).normalize();
 		
-		Vector2 rightToLeft = new Vector2(right, left).normalize();
-		Vector2 rightToUp = new Vector2(right, up).normalize();
+		Vector rightToLeft = new Vector(right, left).normalize();
+		Vector rightToUp = new Vector(right, up).normalize();
 		
 		// Vecteurs pour les points qui represente les labels
 		
@@ -86,51 +85,51 @@ public class PieceTrioker extends TriangleEqui {
 		// Point up
 		switch (upLabel) {
 			case 1:
-				Point2.translation(up, Vector2.multiplication(upToCenter, distClosest)).draw(g2d, pointMidSize);
+				Point.translation(up, Vector.multiplication(upToCenter, distClosest)).draw(g2d, pointMidSize);
 			break;
 			case 2:
-				Point2.translation(up, Vector2.multiplication(upToCenter, distClosest)).draw(g2d, pointMidSize);
-				Point2.translation(up, Vector2.multiplication(upToCenter, distFarthest)).draw(g2d, pointMidSize);
+				Point.translation(up, Vector.multiplication(upToCenter, distClosest)).draw(g2d, pointMidSize);
+				Point.translation(up, Vector.multiplication(upToCenter, distFarthest)).draw(g2d, pointMidSize);
 			break;
 			case 3:
-				Point2 closest = Point2.translation(up, Vector2.multiplication(upToCenter, distClosest));
+				Point closest = Point.translation(up, Vector.multiplication(upToCenter, distClosest));
 				closest.draw(g2d, pointMidSize);
-				Point2.translation(closest, Vector2.multiplication(upToLeft, arete)).draw(g2d, pointMidSize);
-				Point2.translation(closest, Vector2.multiplication(upToRight, arete)).draw(g2d, pointMidSize);
+				Point.translation(closest, Vector.multiplication(upToLeft, arete)).draw(g2d, pointMidSize);
+				Point.translation(closest, Vector.multiplication(upToRight, arete)).draw(g2d, pointMidSize);
 			break;
 		}
 		
 		//Points left
 		switch (leftLabel) {
 			case 1:
-				Point2.translation(left, Vector2.multiplication(leftToCenter, distClosest)).draw(g2d, pointMidSize);
+				Point.translation(left, Vector.multiplication(leftToCenter, distClosest)).draw(g2d, pointMidSize);
 			break;
 			case 2:
-				Point2.translation(left, Vector2.multiplication(leftToCenter, distClosest)).draw(g2d, pointMidSize);
-				Point2.translation(left, Vector2.multiplication(leftToCenter, distFarthest)).draw(g2d, pointMidSize);
+				Point.translation(left, Vector.multiplication(leftToCenter, distClosest)).draw(g2d, pointMidSize);
+				Point.translation(left, Vector.multiplication(leftToCenter, distFarthest)).draw(g2d, pointMidSize);
 			break;
 			case 3:
-				Point2 closest = Point2.translation(left, Vector2.multiplication(leftToCenter, distClosest));
+				Point closest = Point.translation(left, Vector.multiplication(leftToCenter, distClosest));
 				closest.draw(g2d, pointMidSize);
-				Point2.translation(closest, Vector2.multiplication(leftToUp, arete)).draw(g2d, pointMidSize);
-				Point2.translation(closest, Vector2.multiplication(leftToRight, arete)).draw(g2d, pointMidSize);
+				Point.translation(closest, Vector.multiplication(leftToUp, arete)).draw(g2d, pointMidSize);
+				Point.translation(closest, Vector.multiplication(leftToRight, arete)).draw(g2d, pointMidSize);
 			break;
 		}
 		
 		// Point right
 		switch (rightLabel) {
 			case 1:
-				Point2.translation(right, Vector2.multiplication(rightToCenter, distClosest)).draw(g2d, pointMidSize);
+				Point.translation(right, Vector.multiplication(rightToCenter, distClosest)).draw(g2d, pointMidSize);
 			break;
 			case 2:
-				Point2.translation(right, Vector2.multiplication(rightToCenter, distClosest)).draw(g2d, pointMidSize);
-				Point2.translation(right, Vector2.multiplication(rightToCenter, distFarthest)).draw(g2d, pointMidSize);
+				Point.translation(right, Vector.multiplication(rightToCenter, distClosest)).draw(g2d, pointMidSize);
+				Point.translation(right, Vector.multiplication(rightToCenter, distFarthest)).draw(g2d, pointMidSize);
 			break;
 			case 3:
-				Point2 closest = Point2.translation(right, Vector2.multiplication(rightToCenter, distClosest));
+				Point closest = Point.translation(right, Vector.multiplication(rightToCenter, distClosest));
 				closest.draw(g2d, pointMidSize);
-				Point2.translation(closest, Vector2.multiplication(rightToLeft, arete)).draw(g2d, pointMidSize);
-				Point2.translation(closest, Vector2.multiplication(rightToUp, arete)).draw(g2d, pointMidSize);
+				Point.translation(closest, Vector.multiplication(rightToLeft, arete)).draw(g2d, pointMidSize);
+				Point.translation(closest, Vector.multiplication(rightToUp, arete)).draw(g2d, pointMidSize);
 			break;
 		}
 	}
@@ -138,7 +137,7 @@ public class PieceTrioker extends TriangleEqui {
 	public void drawLabel(Graphics2D g2d) {
 		FontMetrics fm = g2d.getFontMetrics();
 		String labelStr = "" + this.leftLabel + " " + this.rightLabel + " " + this.upLabel;
-		Point2 center = this.center();
+		Point center = this.center();
 		int centeredText = (int) (center.x - fm.stringWidth(labelStr) / 2);
 		g2d.drawString(labelStr, centeredText, (int) (center.y + 5)); // - midWidth - fm.getDescent()
 	}

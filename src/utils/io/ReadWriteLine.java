@@ -9,22 +9,22 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import utils.go.PointVisible;
-import utils.go.VecteurVisible;
+import utils.go.Point;
+import utils.go.Line;
 
 /** Assumes UTF-8 encoding. JDK 7+. */
-public class ReadWriteVecteur {
+public class ReadWriteLine {
 	File rf;
 	ArrayList<String> textToWrite;
 	private final static Charset ENCODING = StandardCharsets.UTF_8;
 
-	public ReadWriteVecteur(String aFileName) {
+	public ReadWriteLine(String aFileName) {
 		rf = new File(aFileName);
 		textToWrite = new ArrayList<String>();
 	}
 
-	public ArrayList<VecteurVisible> read() throws IOException {
-		ArrayList<VecteurVisible> segments = new ArrayList<VecteurVisible>();
+	public ArrayList<Line> read() throws IOException {
+		ArrayList<Line> segments = new ArrayList<Line>();
 		try (Scanner scanner = new Scanner(rf, ENCODING.name())) {
 			int i = 0;
 			while (scanner.hasNextLine()) {
@@ -36,23 +36,23 @@ public class ReadWriteVecteur {
 	}
 
 	// suppose que le fichier contient des paquets de 4 lignes de coordonn�es...
-	VecteurVisible readLine(String aLine, int i) {
+	Line readLine(String aLine, int i) {
 		Scanner scanner = new Scanner(aLine);
 		scanner.useDelimiter(";");
-		PointVisible gauche, droite;
+		Point gauche, droite;
 		String xg, xd, yg, yd;
 
-		VecteurVisible s = null;
+		Line s = null;
 		if (scanner.hasNext()) {
 			// assumes the line has a certain structure
 			xg = scanner.next();
 			yg = scanner.next();
-			gauche = new PointVisible(Integer.parseInt(xg), Integer.parseInt(yg));
+			gauche = new Point(Integer.parseInt(xg), Integer.parseInt(yg));
 			xd = scanner.next();
 			yd = scanner.next();
-			droite = new PointVisible(Integer.parseInt(xd), Integer.parseInt(yd));
-			s = new VecteurVisible(gauche, droite);
-			s.setLabel("s " + i);
+			droite = new Point(Integer.parseInt(xd), Integer.parseInt(yd));
+			s = new Line(gauche, droite);
+			//s.setLabel("s " + i);
 		}
 		scanner.close();
 		return s;

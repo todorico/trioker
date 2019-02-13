@@ -17,32 +17,34 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import utils.go.PieceTrioker;
-import utils.go.Point2;
-import utils.go.Vector2;
-import utils.go.PointVisible;
-import utils.go.VecteurVisible;
+import utils.go.Vector;
+import utils.go.Point;
+import utils.go.Line;
 import utils.io.ReadWritePoint;
 
 
 public class Vue extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener{
+	
 	Color bgColor;
 	Color fgColor; 
+	
 	int width, height;
 	
-	Point2 initialLocation, previousLocation, newLocation;
+	Point initialLocation, previousLocation, newLocation;
 	Rectangle rectangleElastique;
 	
-	private List<PointVisible> points;
-	private List<VecteurVisible> aretes;
-	
-	private List<PieceTrioker> alPieceTriokers;
+	private List<Point> points;
+	private List<Line> aretes;
+	private List<PieceTrioker> pieces;
 	//private List<PieceTriokerTrioker> PieceTriokers;
 	
 	PieceTrioker draggedPieceTrioker;
 
-	public Vue(int width, int height, String fileName, List<PieceTrioker> PieceTriokers) {
+	public Vue(int width, int height, String fileName, List<PieceTrioker> pieces) {
 		super();
+		
 		Couleur.forPrinter(true);
+		
 		this.bgColor = Couleur.bg;
 		this.fgColor = Couleur.fg;
 		this.width = width;
@@ -50,8 +52,7 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener, M
 		
 		this.points = new ArrayList<>();
 		this.aretes = new ArrayList<>();
-		this.alPieceTriokers = new ArrayList<>();
-		//this.PieceTriokers = new ArrayList<>();
+		this.pieces = pieces;
 		
 		this.setBackground(Couleur.bg);
 		this.setPreferredSize(new Dimension(width, width));
@@ -61,35 +62,36 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener, M
 		
 		this.initFromLog(fileName);
 		
-		this.alPieceTriokers = PieceTriokers;
 		draggedPieceTrioker = null;
 	}
 
 	private void initFromLog(String fileName) {
 		ReadWritePoint rw = new ReadWritePoint(fileName);
 		points = rw.read();
-		aretes = new ArrayList<VecteurVisible>();
+		aretes = new ArrayList<Line>();
 		int n = points.size();
 		for (int i = 0 ; i < n; i++) {
-			aretes.add(new VecteurVisible(points.get(i), points.get((i+1)%n)));
+			aretes.add(new Line(points.get(i), points.get((i+1)%n)));
 		}
 	}
 
 	public void export(String logFile) {
 		ReadWritePoint rw = new ReadWritePoint(logFile);
-		for (PointVisible p: points){
-			rw.add((int)p.getMC().x+";"+(int)p.getMC().y+";"+p.toString());
+		for (Point p: points){
+			rw.add((int)p.x+";"+(int)p.y+";"+p.toString());
 		}
 		rw.write();
 	}
 
-	public void setPoints(ArrayList<PointVisible> points) {
+	public void setPoints(ArrayList<Point> points) {
 		this.points = points;
 	}	
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		
 		Graphics2D g2d = (Graphics2D) g;
+		
 		g2d.setPaintMode(); 
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,	RenderingHints.VALUE_ANTIALIAS_ON);	
 		g2d.setColor(fgColor);
@@ -97,52 +99,45 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener, M
 		if (rectangleElastique != null)
 			g2d.draw(rectangleElastique);
 		
-		for (VecteurVisible v: aretes)
-			v.dessine(g2d);
+		for (Line v: aretes)
+			v.draw(g2d);
 		
-		for (PointVisible p : points)
-			p.dessine(g2d);
+		for (Point p : points)
+			p.draw(g2d);
 		
-		for (PieceTrioker pi : alPieceTriokers)
+		for (PieceTrioker pi : pieces)
 			pi.draw(g2d);
-		
 	}
 
 	private PieceTrioker getPieceTriokerSelected(int x, int y) {
-		for (PieceTrioker PieceTrioker : alPieceTriokers)
+		for (PieceTrioker PieceTrioker : pieces)
 			if (PieceTrioker.contains(x, y))
 				return PieceTrioker;
+		
 		return null;
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		
-		if (SwingUtilities.isLeftMouseButton(e))
-			this.leftMouseButtonPressed(e);
+		PieceTrioker piece = getPieceTriokerSelected(e.getX(), e.getY());
+        
+		if (piece == null)
+        	return;
 		
-		if (SwingUtilities.isRightMouseButton(e))
-			this.rightMouseButtonPressed(e);
+		if (SwingUtilities.isLeftMouseButton(e)) {
+			this.draggedPieceTrioker = piece;
+			this.initialLocation = new Point(e.getX(), e.getY());
+		} else if (SwingUtilities.isRightMouseButton(e)) {
+			piece.reverse();
+			repaint();
+		}
 	}
 	
-	private void leftMouseButtonPressed(MouseEvent e) {
-		this.draggedPieceTrioker = this.getPieceTriokerSelected(e.getX(), e.getY());
-		
-		
-		this.initialLocation = new Point2(e.getX(), e.getY());
-	}
-	
-	//Modifier l'appel de rotate si besoin
-	private void rightMouseButtonPressed(MouseEvent e) {
-		PieceTrioker PieceTriokerSelected = this.getPieceTriokerSelected(e.getX(), e.getY());
-		PieceTriokerSelected.reverse();
-		repaint();
-	}
-
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (this.draggedPieceTrioker != null) {
-			this.newLocation = new Point2(e.getX(), e.getY());
+			this.newLocation = new Point(e.getX(), e.getY());
 			this.deplacerPieceTrioker();
 			repaint();
 		}
@@ -151,8 +146,9 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener, M
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		if (this.draggedPieceTrioker != null) {
-			this.newLocation = new Point2(e.getX(), e.getY());
+			this.newLocation = new Point(e.getX(), e.getY());
 			this.deplacerPieceTrioker();
+			snapAll(draggedPieceTrioker, 20);
 			this.draggedPieceTrioker = null;
 			repaint();
 		}
@@ -160,28 +156,73 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener, M
 	
 	@Override
     public void mouseWheelMoved(MouseWheelEvent e) {
-        
+		
 		PieceTrioker piece = getPieceTriokerSelected(e.getX(), e.getY());
+
         if (piece == null)
         	return;
         
         int notches = e.getWheelRotation();
         
-        if (notches < 0) { //up
-        	piece.rotateRight();
-        } else if (notches > 0){ // down
-        	piece.rotateLeft();
-        }
+        if (notches < 0) // up
+        	piece.rotate(5);
+        else if (notches > 0) // down
+        	piece.rotate(-5);
         
         repaint();
     }
 	
 	private void deplacerPieceTrioker() {
-		Vector2 translation = new Vector2(this.initialLocation, this.newLocation);
-		this.draggedPieceTrioker.translate(translation);
+		this.draggedPieceTrioker.translate(new Vector(this.initialLocation, this.newLocation));
 		this.initialLocation = this.newLocation;
 	}
 	
+	private void snapAll(PieceTrioker p, double dist) {
+		
+		for (Point pt : points) {
+			snap(p, pt, dist);
+		}
+		
+		for (PieceTrioker pi : pieces) {
+			snap(p, pi.up, dist);
+			snap(p, pi.left, dist);
+			snap(p, pi.right, dist);
+		}
+	}
+	
+	private boolean snap(PieceTrioker pi, Point pt, double dist) {
+		if (near(pi.up, pt, dist)) {
+			pi.translate(new Vector(pi.up, pt));
+			return true;
+		} else if (near(pi.left, pt, dist)) {
+			pi.translate(new Vector(pi.left, pt));
+			return true;
+		} else if (near(pi.right, pt, dist)) {
+			pi.translate(new Vector(pi.right, pt));
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private boolean near(Point a, Point b, double dist) {
+		return (a.x <= b.x + dist) && (a.x >= b.x - dist) && 
+				(a.y <= b.y + dist) && (a.y >= b.y - dist);
+	}
+	
+	private boolean lineMatch(Line a, int aLabelFrom, int aLabelTo, Line b, int bLabelFrom, int bLabelTo, double dist) {
+		return (near(a.from, b.from, dist) && near(a.to, b.to, dist) && aLabelFrom == bLabelFrom && aLabelTo == bLabelTo) ||
+				(near(a.from, b.to, dist) && near(a.to, b.from, dist) && aLabelFrom == bLabelTo && aLabelTo == bLabelFrom);
+	}
+	
+	//private nbMatchNeeded
+	/*
+	// Si on a assez de ligne qui match avec l
+	private boolean wellPlaced(PieceTrioker p1, PieceTrioker p2, int nbMatchNeeded) {		
+		lineMatch(new Line(p1.left, p1.right), p1.leftLabel, p1.rightLabel, new Line(p2.left, p2.right),  p2.leftLabel, p2.rightLabel);
+		
+	}
+	*/
 	@Override
 	public void mouseClicked(MouseEvent e) {}
 

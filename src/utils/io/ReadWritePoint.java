@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import utils.go.PointVisible;
+import utils.go.Point;
 
 
 /** Assumes UTF-8 encoding. JDK 7+. */
@@ -22,27 +22,27 @@ public class ReadWritePoint {
 		textToWrite = new ArrayList<String>();
 	}
 
-	public ArrayList<PointVisible> read()  {
-		ArrayList<PointVisible> PointVisibles = new ArrayList<PointVisible>();
+	public ArrayList<Point> read()  {
+		ArrayList<Point> Point2s = new ArrayList<Point>();
 		try (Scanner scanner = new Scanner(rf, ENCODING.name())) {
 			int i = 0;
 			while (scanner.hasNextLine()) {
-				PointVisibles.add(readLine(scanner.nextLine(), i++));
+				Point2s.add(readLine(scanner.nextLine(), i++));
 			}
-			//System.out.println(PointVisibles.size() + " PointVisibles lus");
+			//System.out.println(Point2s.size() + " Point2s lus");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		return PointVisibles;
+		return Point2s;
 	}
 
-	// Suppose que les PointVisibles sont d�crits ligne par ligne et pour chaque ligne, le format est: 
+	// Suppose que les Point2s sont d�crits ligne par ligne et pour chaque ligne, le format est: 
 	// x;y;label
-	// x,y sont les coordonn�es et label est l'�tiquette associ�e au PointVisible
-	PointVisible readLine(String aLine, int i) {
+	// x,y sont les coordonn�es et label est l'�tiquette associ�e au Point2
+	Point readLine(String aLine, int i) {
 		Scanner scanner = new Scanner(aLine);
 		scanner.useDelimiter(";");
-		PointVisible p = null;
+		Point p = null;
 		String x,y, label;
 
 		if (scanner.hasNext()) {
@@ -51,8 +51,8 @@ public class ReadWritePoint {
 			y = scanner.next();
 			label = scanner.hasNext()? scanner.next():"p"+i;
 
-			p = new PointVisible(Integer.parseInt(x), Integer.parseInt(y));
-			p.setLabel(label);
+			p = new Point(Integer.parseInt(x), Integer.parseInt(y));
+			//p.setLabel(label);
 		}
 		scanner.close();
 		return p;
