@@ -119,21 +119,23 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener, M
 	public void mousePressed(MouseEvent e) {
 		
 		if (SwingUtilities.isLeftMouseButton(e))
-			this.rightMouseButtonPressed(e);
+			this.leftMouseButtonPressed(e);
 		
 		if (SwingUtilities.isRightMouseButton(e))
-			this.leftMouseButtonPressed(e);
+			this.rightMouseButtonPressed(e);
 	}
 	
-	private void rightMouseButtonPressed(MouseEvent e) {
+	private void leftMouseButtonPressed(MouseEvent e) {
 		this.draggedPieceTrioker = this.getPieceTriokerSelected(e.getX(), e.getY());
+		
+		
 		this.initialLocation = new Point2(e.getX(), e.getY());
 	}
 	
 	//Modifier l'appel de rotate si besoin
-	private void leftMouseButtonPressed(MouseEvent e) {
+	private void rightMouseButtonPressed(MouseEvent e) {
 		PieceTrioker PieceTriokerSelected = this.getPieceTriokerSelected(e.getX(), e.getY());
-		PieceTriokerSelected.rotateLeft();
+		PieceTriokerSelected.reverse();
 		repaint();
 	}
 

@@ -15,7 +15,7 @@ public class Point2 {
 		this.x = x;
 		this.y = y;
 	}
-	
+
 	public Point2 translate(Vector2 v) {
 		this.x += v.x;
 		this.y += v.y;

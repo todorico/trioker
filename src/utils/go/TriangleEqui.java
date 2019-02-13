@@ -55,7 +55,7 @@ public class TriangleEqui {
 	}
 	/* Calcul l'aire entre 3 points. */
 	public static double area(Point2 left, Point2 right, Point2 up) {
-		
+		/*
 		Vector2 leftToRight = new Vector2(left, right);
 		
 		double largeur = leftToRight.length();
@@ -64,6 +64,21 @@ public class TriangleEqui {
 		Vector2 upToMiddle = new Vector2(up, middle);
 		
 		double hauteur = upToMiddle.length();
+		*/
+		//return Math.abs((largeur * hauteur)/2.0);
+		return Math.abs((left.x * (up.y - right.y) + right.x * (left.y - up.y) + up.x * (right.y - left.y))/2.0); 
+	}
+	
+	public static double areaSquared(Point2 left, Point2 right, Point2 up) {
+		
+		Vector2 leftToRight = new Vector2(left, right);
+		
+		double largeur = leftToRight.lengthSquared();
+		
+		Point2 middle = Point2.translation(left, Vector2.division(leftToRight, 2));
+		Vector2 upToMiddle = new Vector2(up, middle);
+		
+		double hauteur = upToMiddle.lengthSquared();
 		
 		return Math.abs((largeur * hauteur)/2.0);
 		//return Math.abs((left.x * (up.y - right.y) + right.x * (left.y - up.y) + up.x * (right.y - left.y))/2.0); 
@@ -78,18 +93,18 @@ public class TriangleEqui {
 		   double A = this.area(); 
 		  
 		   /* Calcule l'aire du triangle p right up */   
-		   double A1 = area (p, right, up); 
+		   double A1 = area(p, right, up); 
 		  
 		   /* Calcule l'aire du triangle left p up */    
-		   double A2 = area (left, p, up); 
+		   double A2 = area(left, p, up); 
 		   
 		   /* Calcule l'aire triangle left right p */   
-		   double A3 = area (left, right, p); 
+		   double A3 = area(left, right, p); 
 		   
 		   double SA = (A1 + A2 + A2);
-
+		   
 		   /* Si la somme de A1 A2 A3 est egale à A alors le p est dans le triangle */ 
-		   return (SA >= (A - 5000)) && (SA <= (A + 5000));
+		   return (SA >= (A - 1000)) && (SA <= (A + 1000));
 		   //return (A == A1 + A2 + A3);
 	}
 	
