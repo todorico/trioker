@@ -14,10 +14,10 @@ import java.util.List;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import utils.go.Piece;
-import utils.go.Point;
+import utils.go.PieceTrioker;
+import utils.go.Point2;
+import utils.go.Vector2;
 import utils.go.PointVisible;
-import utils.go.Vecteur;
 import utils.go.VecteurVisible;
 import utils.io.ReadWritePoint;
 
@@ -27,16 +27,18 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener{
 	Color fgColor; 
 	int width, height;
 	
-	Point initialLocation, previousLocation, newLocation;
+	Point2 initialLocation, previousLocation, newLocation;
 	Rectangle rectangleElastique;
 	
 	private List<PointVisible> points;
 	private List<VecteurVisible> aretes;
 	
-	private List<Piece> alPieces;
-	Piece draggedPiece;
+	private List<PieceTrioker> alPieceTriokers;
+	//private List<PieceTriokerTrioker> PieceTriokers;
+	
+	PieceTrioker draggedPieceTrioker;
 
-	public Vue(int width, int height, String fileName, List<Piece> pieces) {
+	public Vue(int width, int height, String fileName, List<PieceTrioker> PieceTriokers) {
 		super();
 		Couleur.forPrinter(true);
 		this.bgColor = Couleur.bg;
@@ -46,7 +48,8 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener{
 		
 		this.points = new ArrayList<>();
 		this.aretes = new ArrayList<>();
-		this.alPieces = new ArrayList<>();
+		this.alPieceTriokers = new ArrayList<>();
+		//this.PieceTriokers = new ArrayList<>();
 		
 		this.setBackground(Couleur.bg);
 		this.setPreferredSize(new Dimension(width, width));
@@ -55,8 +58,8 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener{
 		
 		this.initFromLog(fileName);
 		
-		this.alPieces = pieces;
-		draggedPiece = null;
+		this.alPieceTriokers = PieceTriokers;
+		draggedPieceTrioker = null;
 	}
 
 	private void initFromLog(String fileName) {
@@ -97,15 +100,15 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener{
 		for (PointVisible p : points)
 			p.dessine(g2d);
 		
-		for (Piece pi : alPieces)
-			pi.dessine(g2d);
+		for (PieceTrioker pi : alPieceTriokers)
+			pi.draw(g2d);
 		
 	}
 
-	private Piece getPieceSelected(int x, int y) {
-		for (Piece piece : alPieces)
-			if (piece.isSelected(x, y))
-				return piece;
+	private PieceTrioker getPieceTriokerSelected(int x, int y) {
+		for (PieceTrioker PieceTrioker : alPieceTriokers)
+			if (PieceTrioker.contains(x, y))
+				return PieceTrioker;
 		return null;
 	}
 
@@ -120,39 +123,39 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener{
 	}
 	
 	private void rightMouseButtonPressed(MouseEvent e) {
-		this.draggedPiece = this.getPieceSelected(e.getX(), e.getY());
-		this.initialLocation = new Point(e.getX(), e.getY());
+		this.draggedPieceTrioker = this.getPieceTriokerSelected(e.getX(), e.getY());
+		this.initialLocation = new Point2(e.getX(), e.getY());
 	}
 	
 	//Modifier l'appel de rotate si besoin
 	private void leftMouseButtonPressed(MouseEvent e) {
-		Piece pieceSelected = this.getPieceSelected(e.getX(), e.getY());
-		pieceSelected.rotateLeft();
+		PieceTrioker PieceTriokerSelected = this.getPieceTriokerSelected(e.getX(), e.getY());
+		PieceTriokerSelected.rotateLeft();
 		repaint();
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		if (this.draggedPiece != null) {
-			this.newLocation = new Point(e.getX(), e.getY());
-			this.deplacerPiece();
+		if (this.draggedPieceTrioker != null) {
+			this.newLocation = new Point2(e.getX(), e.getY());
+			this.deplacerPieceTrioker();
 			repaint();
 		}
 	}
 	
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if (this.draggedPiece != null) {
-			this.newLocation = new Point(e.getX(), e.getY());
-			this.deplacerPiece();
-			this.draggedPiece = null;
+		if (this.draggedPieceTrioker != null) {
+			this.newLocation = new Point2(e.getX(), e.getY());
+			this.deplacerPieceTrioker();
+			this.draggedPieceTrioker = null;
 			repaint();
 		}
 	}
 	
-	private void deplacerPiece() {
-		Vecteur translation = new Vecteur(this.initialLocation, this.newLocation);
-		this.draggedPiece.translater(translation);
+	private void deplacerPieceTrioker() {
+		Vector2 translation = new Vector2(this.initialLocation, this.newLocation);
+		this.draggedPieceTrioker.translate(translation);
 		this.initialLocation = this.newLocation;
 	}
 	

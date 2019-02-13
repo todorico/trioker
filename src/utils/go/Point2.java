@@ -21,10 +21,11 @@ public class Point2 {
 		this.y += v.y;
 	}
 	
-	public void rotate(Point2 center, double angle) {	      
-		double radians = Math.toRadians(angle);
-		this.x = (this.x - center.x) * Math.cos(radians) + (this.y - center.y) * Math.sin(radians) + center.x;
-		this.y = -(this.x - center.x) * Math.sin(radians) + (this.y - center.y) * Math.cos(radians) + center.y;
+	public Point2 rotate(Point2 center, double angle) {	      
+		Point2 p = rotation(this, center, angle);
+		this.x = p.x;
+		this.y = p.y;
+		return p;
 	}
 	
 	public void draw(Graphics2D g) {
@@ -33,11 +34,23 @@ public class Point2 {
 		g.fill(new Ellipse2D.Double(this.x - midWidth, this.y - midWidth, 2 * midWidth, 2 * midWidth));
 	}
 	
-	static double distance(Point2 p1, Point2 p2) {
+	public static Point2 rotation(Point2 p, Point2 center, double angle) {
+		double radians = Math.toRadians(angle);
+		return new Point2(
+					(p.x - center.x) * Math.cos(radians) + (p.y - center.y) * Math.sin(radians) + center.x,
+					-(p.x - center.x) * Math.sin(radians) + (p.y - center.y) * Math.cos(radians) + center.y
+				);
+	}
+	
+	public static Point2 translation(Point2 p, Vector2 v) {
+		return new Point2(p.x + v.x, p.y + v.y);
+	}
+	
+	static public double distance(Point2 p1, Point2 p2) {
 		return Math.sqrt(distanceSquared(p1, p2));
 	}
 
-	static double distanceSquared(Point2 p1, Point2 p2) {
+	static public double distanceSquared(Point2 p1, Point2 p2) {
 		return (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y);
 	}
 }

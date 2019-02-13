@@ -9,6 +9,7 @@ public class PieceTrioker extends TriangleEqui {
 	private static int pointMidSize = 3;
 	
 	private int leftLabel, rightLabel, upLabel;
+	private boolean isReversed = false;
 
 	public PieceTrioker(Point2 center, double rayon, int leftLabel, int rightLabel, int upLabel) {
 		super(center, rayon);
@@ -17,16 +18,40 @@ public class PieceTrioker extends TriangleEqui {
 		this.upLabel = upLabel;
 	}
 	
+	public PieceTrioker(Point2 left, Point2 right, Point2 up, int leftLabel, int rightLabel, int upLabel) {
+		super(left, right, up);
+		this.leftLabel = leftLabel;
+		this.rightLabel = rightLabel;
+		this.upLabel = upLabel;
+	}
+	
 	public void rotateLeft() {
-		rotate(-60);
+		rotate(-120);
 	}
 	
 	public void rotateRight() {
-		rotate(60);
+		rotate(120);
 	}
 	
 	public void reverse() {
+		
+		Vector2 direction = new Vector2(0, 0);
+		
+		if (!isReversed()) {
+			direction.add(Vector2.multiplication(Vector2.up, -this.radius()/2));
+		} else {
+			direction.add(Vector2.multiplication(Vector2.down, -this.radius()/2));
+		}
+		
+		translate(direction);
+		
+		this.isReversed = !this.isReversed;
+		
 		rotate(180);
+	}
+	
+	public boolean isReversed() {
+		return this.isReversed;
 	}
 	
 	public void draw(Graphics2D g) {
@@ -34,75 +59,59 @@ public class PieceTrioker extends TriangleEqui {
 		drawPoints(g); // dessine des points en fonction des labels 
 		drawLabel(g);  // dessine une chaine en fonction des labels
 	}
-
-	public void dessine(Graphics2D g2d) {
-		//Affichage triangle
-		Vecteur v1 = new Vecteur(this.pGauche, this.pDroite);
-		Vecteur v2 = new Vecteur(this.pDroite, this.pHaut);
-		Vecteur v3 = new Vecteur(this.pHaut, this.pGauche);
-		v1.dessine(g2d);
-		v2.dessine(g2d);
-		v3.dessine(g2d);
-
-		//Affichage points
-		drawPoints(g2d);
-		
-		//Affichage label
-		drawLabel(g2d);
-	}
-
+	
 	private void drawPoints(Graphics2D g2d) {
 		
 		//0 : ne rien faire
 
-//		Point p1 = new Point(pHaut.x, pHaut.y + 20);
+//		Point p1 = new Point(up.x, up.y + 20);
 //		p1.dessine(g2d);
 		
 		//Points Haut
 		switch (upLabel) {
 			case 1:
-				afficherPoint(g2d, up.x, pHaut.y + 16);
+				afficherPoint(g2d, up.x, up.y + 16);
 				break;
 			case 2:
-				afficherPoint(g2d, pHaut.x, pHaut.y + 16);
-				afficherPoint(g2d, pHaut.x, pHaut.y + 26);
+				afficherPoint(g2d, up.x, up.y + 16);
+				afficherPoint(g2d, up.x, up.y + 26);
 				break;
 			case 3:
-				afficherPoint(g2d, pHaut.x, pHaut.y + 16);
-				afficherPoint(g2d, pHaut.x - 6, pHaut.y + 26);
-				afficherPoint(g2d, pHaut.x + 6, pHaut.y + 26);
+				afficherPoint(g2d, up.x, up.y + 16);
+				afficherPoint(g2d, up.x - 6, up.y + 26);
+				afficherPoint(g2d, up.x + 6, up.y + 26);
 				break;
 		}
 		
 		//Points Gauche
-		switch (labelGauche) {
+		switch (leftLabel) {
 			case 1:
-				afficherPoint(g2d, pGauche.x + 16, pGauche.y - 8);
+				afficherPoint(g2d, left.x + 16, left.y - 8);
 				break;
 			case 2:
-				afficherPoint(g2d, pGauche.x + 16, pGauche.y - 8);
-				afficherPoint(g2d, pGauche.x + 26, pGauche.y - 14);
+				afficherPoint(g2d, left.x + 16, left.y - 8);
+				afficherPoint(g2d, left.x + 26, left.y - 14);
 				break;
 			case 3:
-				afficherPoint(g2d, pGauche.x + 16, pGauche.y - 8);
-				afficherPoint(g2d, pGauche.x + 22, pGauche.y - 18);
-				afficherPoint(g2d, pGauche.x + 28, pGauche.y - 8);
+				afficherPoint(g2d, left.x + 16, left.y - 8);
+				afficherPoint(g2d, left.x + 22, left.y - 18);
+				afficherPoint(g2d, left.x + 28, left.y - 8);
 				break;
 		}
 		
 		//Points Droite
-		switch (labelDroite) {
+		switch (rightLabel) {
 			case 1:
-				afficherPoint(g2d, pDroite.x - 16, pDroite.y - 8);
+				afficherPoint(g2d, right.x - 16, right.y - 8);
 				break;
 			case 2:
-				afficherPoint(g2d, pDroite.x - 16, pDroite.y - 8);
-				afficherPoint(g2d, pDroite.x - 26, pDroite.y - 14);
+				afficherPoint(g2d, right.x - 16, right.y - 8);
+				afficherPoint(g2d, right.x - 26, right.y - 14);
 				break;
 			case 3:
-				afficherPoint(g2d, pDroite.x - 16, pDroite.y - 8);
-				afficherPoint(g2d, pDroite.x - 22, pDroite.y - 18);
-				afficherPoint(g2d, pDroite.x - 28, pDroite.y - 8);
+				afficherPoint(g2d, right.x - 16, right.y - 8);
+				afficherPoint(g2d, right.x - 22, right.y - 18);
+				afficherPoint(g2d, right.x - 28, right.y - 8);
 				break;
 		}
 	}
@@ -113,16 +122,18 @@ public class PieceTrioker extends TriangleEqui {
 
 	public void drawLabel(Graphics2D g2d) {
 		FontMetrics fm = g2d.getFontMetrics();
-		String labelStr = "" + this.labelGauche + " " + this.labelDroite + " " + this.labelHaut;
-		Point center = this.center();
+		String labelStr = "" + this.leftLabel + " " + this.rightLabel + " " + this.upLabel;
+		Point2 center = this.center();
 		int centeredText = (int) (center.x - fm.stringWidth(labelStr) / 2);
 		g2d.drawString(labelStr, centeredText, (int) (center.y + 5)); // - midWidth - fm.getDescent()
 	}
-
+/*
 	public boolean isSelected(int x, int y) {
 		if (!isReversed)
-			return (y <= this.pHaut.y && y >= this.pGauche.y) && (x >= this.pGauche.x && x <= this.pDroite.x);
+			return (y <= this.up.y && y >= this.left.y) && (x >= this.left.x && x <= this.right.x);
 		else
-			return (y >= this.pHaut.y && y <= this.pGauche.y) && (x >= this.pGauche.x && x <= this.pDroite.x);
+			return (y >= this.up.y && y <= this.left.y) && (x >= this.left.x && x <= this.up.x);
 	}
+*/
 }
+
