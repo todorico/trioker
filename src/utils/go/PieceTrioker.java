@@ -62,62 +62,77 @@ public class PieceTrioker extends TriangleEqui {
 	
 	private void drawPoints(Graphics2D g2d) {
 		
-		//0 : ne rien faire
-
-//		Point p1 = new Point(up.x, up.y + 20);
-//		p1.dessine(g2d);
+		// Vecteurs de direction vers le centre
 		
-		//Points Haut
+		Vector2 upToCenter = new Vector2(up, center()).normalize();
+		Vector2 leftToCenter = new Vector2(left, center()).normalize();
+		Vector2 rightToCenter = new Vector2(right, center()).normalize();
+				
+		Vector2 upToLeft = new Vector2(up, left).normalize();
+		Vector2 upToRight = new Vector2(up, right).normalize();
+	
+		Vector2 leftToUp = new Vector2(left, up).normalize();
+		Vector2 leftToRight = new Vector2(left, right).normalize();
+		
+		Vector2 rightToLeft = new Vector2(right, left).normalize();
+		Vector2 rightToUp = new Vector2(right, up).normalize();
+		
+		// Vecteurs pour les points qui represente les labels
+		
+		double arete = 12;
+		double distClosest = 16;
+		double distFarthest = 26;
+		
+		// Point up
 		switch (upLabel) {
 			case 1:
-				afficherPoint(g2d, up.x, up.y + 16);
-				break;
+				Point2.translation(up, Vector2.multiplication(upToCenter, distClosest)).draw(g2d, pointMidSize);
+			break;
 			case 2:
-				afficherPoint(g2d, up.x, up.y + 16);
-				afficherPoint(g2d, up.x, up.y + 26);
-				break;
+				Point2.translation(up, Vector2.multiplication(upToCenter, distClosest)).draw(g2d, pointMidSize);
+				Point2.translation(up, Vector2.multiplication(upToCenter, distFarthest)).draw(g2d, pointMidSize);
+			break;
 			case 3:
-				afficherPoint(g2d, up.x, up.y + 16);
-				afficherPoint(g2d, up.x - 6, up.y + 26);
-				afficherPoint(g2d, up.x + 6, up.y + 26);
-				break;
+				Point2 closest = Point2.translation(up, Vector2.multiplication(upToCenter, distClosest));
+				closest.draw(g2d, pointMidSize);
+				Point2.translation(closest, Vector2.multiplication(upToLeft, arete)).draw(g2d, pointMidSize);
+				Point2.translation(closest, Vector2.multiplication(upToRight, arete)).draw(g2d, pointMidSize);
+			break;
 		}
 		
-		//Points Gauche
+		//Points left
 		switch (leftLabel) {
 			case 1:
-				afficherPoint(g2d, left.x + 16, left.y - 8);
-				break;
+				Point2.translation(left, Vector2.multiplication(leftToCenter, distClosest)).draw(g2d, pointMidSize);
+			break;
 			case 2:
-				afficherPoint(g2d, left.x + 16, left.y - 8);
-				afficherPoint(g2d, left.x + 26, left.y - 14);
-				break;
+				Point2.translation(left, Vector2.multiplication(leftToCenter, distClosest)).draw(g2d, pointMidSize);
+				Point2.translation(left, Vector2.multiplication(leftToCenter, distFarthest)).draw(g2d, pointMidSize);
+			break;
 			case 3:
-				afficherPoint(g2d, left.x + 16, left.y - 8);
-				afficherPoint(g2d, left.x + 22, left.y - 18);
-				afficherPoint(g2d, left.x + 28, left.y - 8);
-				break;
+				Point2 closest = Point2.translation(left, Vector2.multiplication(leftToCenter, distClosest));
+				closest.draw(g2d, pointMidSize);
+				Point2.translation(closest, Vector2.multiplication(leftToUp, arete)).draw(g2d, pointMidSize);
+				Point2.translation(closest, Vector2.multiplication(leftToRight, arete)).draw(g2d, pointMidSize);
+			break;
 		}
 		
-		//Points Droite
+		// Point right
 		switch (rightLabel) {
 			case 1:
-				afficherPoint(g2d, right.x - 16, right.y - 8);
-				break;
+				Point2.translation(right, Vector2.multiplication(rightToCenter, distClosest)).draw(g2d, pointMidSize);
+			break;
 			case 2:
-				afficherPoint(g2d, right.x - 16, right.y - 8);
-				afficherPoint(g2d, right.x - 26, right.y - 14);
-				break;
+				Point2.translation(right, Vector2.multiplication(rightToCenter, distClosest)).draw(g2d, pointMidSize);
+				Point2.translation(right, Vector2.multiplication(rightToCenter, distFarthest)).draw(g2d, pointMidSize);
+			break;
 			case 3:
-				afficherPoint(g2d, right.x - 16, right.y - 8);
-				afficherPoint(g2d, right.x - 22, right.y - 18);
-				afficherPoint(g2d, right.x - 28, right.y - 8);
-				break;
+				Point2 closest = Point2.translation(right, Vector2.multiplication(rightToCenter, distClosest));
+				closest.draw(g2d, pointMidSize);
+				Point2.translation(closest, Vector2.multiplication(rightToLeft, arete)).draw(g2d, pointMidSize);
+				Point2.translation(closest, Vector2.multiplication(rightToUp, arete)).draw(g2d, pointMidSize);
+			break;
 		}
-	}
-
-	private void afficherPoint(Graphics2D g2d, double x, double y) {
-		g2d.fill(new Ellipse2D.Double(x - pointMidSize, y - pointMidSize, 2*pointMidSize, 2*pointMidSize));
 	}
 
 	public void drawLabel(Graphics2D g2d) {
@@ -127,13 +142,5 @@ public class PieceTrioker extends TriangleEqui {
 		int centeredText = (int) (center.x - fm.stringWidth(labelStr) / 2);
 		g2d.drawString(labelStr, centeredText, (int) (center.y + 5)); // - midWidth - fm.getDescent()
 	}
-/*
-	public boolean isSelected(int x, int y) {
-		if (!isReversed)
-			return (y <= this.up.y && y >= this.left.y) && (x >= this.left.x && x <= this.right.x);
-		else
-			return (y >= this.up.y && y <= this.left.y) && (x >= this.left.x && x <= this.up.x);
-	}
-*/
 }
 

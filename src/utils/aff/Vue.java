@@ -7,6 +7,8 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,7 @@ import utils.go.VecteurVisible;
 import utils.io.ReadWritePoint;
 
 
-public class Vue extends JPanel implements MouseListener, MouseMotionListener{
+public class Vue extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener{
 	Color bgColor;
 	Color fgColor; 
 	int width, height;
@@ -55,6 +57,7 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener{
 		this.setPreferredSize(new Dimension(width, width));
 		this.addMouseListener(this);
 		this.addMouseMotionListener(this);
+        this.addMouseWheelListener(this);
 		
 		this.initFromLog(fileName);
 		
@@ -152,6 +155,24 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener{
 			repaint();
 		}
 	}
+	
+	@Override
+    public void mouseWheelMoved(MouseWheelEvent e) {
+        
+		PieceTrioker piece = getPieceTriokerSelected(e.getX(), e.getY());
+        if (piece == null)
+        	return;
+        
+        int notches = e.getWheelRotation();
+        
+        if (notches < 0) { //up
+        	piece.rotateRight();
+        } else if (notches > 0){ // down
+        	piece.rotateLeft();
+        }
+        
+        repaint();
+    }
 	
 	private void deplacerPieceTrioker() {
 		Vector2 translation = new Vector2(this.initialLocation, this.newLocation);

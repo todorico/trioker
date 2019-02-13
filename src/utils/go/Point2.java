@@ -16,20 +16,26 @@ public class Point2 {
 		this.y = y;
 	}
 	
-	public void translate(Vector2 v) {
+	public Point2 translate(Vector2 v) {
 		this.x += v.x;
 		this.y += v.y;
+		return this;
 	}
 	
 	public Point2 rotate(Point2 center, double angle) {	      
 		Point2 p = rotation(this, center, angle);
 		this.x = p.x;
 		this.y = p.y;
-		return p;
+		return this;
 	}
 	
 	public void draw(Graphics2D g) {
 		int midWidth = 5;
+		g.setColor(Couleur.fg);
+		g.fill(new Ellipse2D.Double(this.x - midWidth, this.y - midWidth, 2 * midWidth, 2 * midWidth));
+	}
+	
+	public void draw(Graphics2D g, int midWidth) {
 		g.setColor(Couleur.fg);
 		g.fill(new Ellipse2D.Double(this.x - midWidth, this.y - midWidth, 2 * midWidth, 2 * midWidth));
 	}
@@ -46,11 +52,11 @@ public class Point2 {
 		return new Point2(p.x + v.x, p.y + v.y);
 	}
 	
-	static public double distance(Point2 p1, Point2 p2) {
+	public static double distance(Point2 p1, Point2 p2) {
 		return Math.sqrt(distanceSquared(p1, p2));
 	}
 
-	static public double distanceSquared(Point2 p1, Point2 p2) {
+	public static double distanceSquared(Point2 p1, Point2 p2) {
 		return (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y);
 	}
 }

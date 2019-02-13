@@ -1,7 +1,11 @@
 package utils.go;
 
 import java.lang.Math.*;
+
+import utils.aff.Couleur;
+
 import java.awt.Graphics2D;
+import java.awt.geom.Ellipse2D;
 
 public class Vector2 {
 
@@ -22,37 +26,36 @@ public class Vector2 {
 		this.y = to.y - from.y;
 	}
 	
-	public void add(Vector2 v) {
+	public Vector2 add(Vector2 v) {
 		this.x += v.x;
 		this.y += v.y;
+		return this;
 	}
 	
-	public void soustract(Vector2 v) {
+	public Vector2 soustract(Vector2 v) {
 		this.x -= v.x;
 		this.y -= v.y;
+		return this;
 	}
 	
-	public void multiply(double scalar) {
+	public Vector2 multiply(double scalar) {
 		this.x *= scalar;
 		this.y *= scalar;
+		return this;
 	}
 	
-	public void divide(double scalar) {
+	public Vector2 divide(double scalar) {
 		this.x /= scalar;
 		this.y /= scalar;
+		return this;
 	}
 	
-	public void normalize() {
-		this.divide(this.length());
+	public Vector2 normalize() {
+		return this.divide(this.length());
 	}
 	
 	public double angle() {
 		return Math.toDegrees(Math.atan2(this.y, this.x));
-	}
-	
-	public static Vector2 ToVector2(double angle) {
-		double radians = Math.toRadians(angle);
-		return new Vector2(Math.acos(radians), Math.asin(radians));
 	}
 	
 	public double lengthSquared() {
@@ -63,38 +66,41 @@ public class Vector2 {
 		return Math.sqrt(this.lengthSquared());
 	}
 	
-	static public Vector2 addition(Vector2 left, Vector2 right) {
+	public void draw(Graphics2D g, Point2 from) {
+		g.setColor(Couleur.fg);
+		g.drawLine((int)from.x , (int)from.y , (int)(from.x + this.x), (int)(from.y + this.y));
+	}
+	
+	// Methodes statiques
+	
+	public static Vector2 ToVector2(double angle) {
+		double radians = Math.toRadians(angle);
+		return new Vector2(Math.acos(radians), Math.asin(radians));
+	}
+	
+	public static double ToAngle(Vector2 v) {
+		return Math.toDegrees(Math.atan2(v.y, v.x));
+	}
+	
+	public static Vector2 addition(Vector2 left, Vector2 right) {
 		return new Vector2(left.x + right.x, left.y + right.y);
 	}
 	
-	static public Vector2 soustraction(Vector2 left, Vector2 right) {
+	public static Vector2 soustraction(Vector2 left, Vector2 right) {
 		return new Vector2(left.x - right.x, left.y - right.y);
 	}
 	
-	static public Vector2 multiplication(Vector2 v, double scalar) {
+	public static Vector2 multiplication(Vector2 v, double scalar) {
 		return new Vector2(v.x * scalar, v.y * scalar);
 	}
 	
-	static public Vector2 division(Vector2 v, double scalar) {
+	public static Vector2 division(Vector2 v, double scalar) {
 		return new Vector2(v.x / scalar, v.y / scalar);
 	}
 	
-	static public Vector2 normalization(Vector2 v) {
+	public static Vector2 normalization(Vector2 v) {
 		return division(v, v.length());
 	}
-	
-	public void draw(Graphics2D g) {
-		
-	}
-	/*
-	public PointVisible toPointVisible() {
-		return new PointVisible(x, y);
-	}
-	
-	public void dessine(Graphics2D g2d) {
-		toPointVisible().dessine(g2d);
-	}
-	*/
 }
 
 
