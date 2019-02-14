@@ -55,6 +55,12 @@ public class TriangleEqui {
 		this.up.rotate(c, angle);
 	}
 	
+	public void rotate(double angle, Point center) {
+		this.left.rotate(center, angle);
+		this.right.rotate(center, angle);
+		this.up.rotate(center, angle);
+	}
+	
 	public double angle() {
 		Vector toUp = new Vector(this.center(), this.up);
 		return toUp.angle();

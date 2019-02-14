@@ -57,6 +57,10 @@ public class Vector {
 		return Math.toDegrees(Math.atan2(this.y, this.x));
 	}
 	
+	public double angle(Vector v) {
+		return Math.toDegrees(Math.acos(this.dot(v)/(this.length() * v.length())));
+	}
+	
 	public double lengthSquared() {
 		return (this.x * this.x) + (this.y * this.y);
 	}
@@ -65,9 +69,17 @@ public class Vector {
 		return Math.sqrt(this.lengthSquared());
 	}
 	
+	public double dot(Vector v) {
+		return (this.x * v.x) + (this.y * v.y);
+	}
+	
 	public void draw(Graphics2D g, Point from) {
 		g.setColor(Couleur.fg);
 		g.drawLine((int)from.x , (int)from.y , (int)(from.x + this.x), (int)(from.y + this.y));
+	}
+	
+	public String toString() {
+		return "(" + x + ", " + y + ")";
 	}
 	
 	// Methodes statiques

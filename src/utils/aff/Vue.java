@@ -38,6 +38,10 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener, M
 	private List<PieceTrioker> pieces;
 	//private List<PieceTriokerTrioker> PieceTriokers;
 	
+	String logSnap;
+	String logPiece;
+	String logPos;
+	
 	PieceTrioker draggedPieceTrioker;
 
 	public Vue(int width, int height, String fileName, List<PieceTrioker> pieces) {
@@ -45,6 +49,10 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener, M
 		
 		Couleur.forPrinter(true);
 		
+		this.logSnap = new String();
+		this.logPiece = new String();
+		this.logPos = new String();
+
 		this.bgColor = Couleur.bg;
 		this.fgColor = Couleur.fg;
 		this.width = width;
@@ -99,6 +107,11 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener, M
 		if (rectangleElastique != null)
 			g2d.draw(rectangleElastique);
 		
+		//g.drawString(logPiece, 10, 20);
+		//g.drawString(logSnap, 10, 40);
+		//g.drawString(logPos, 10, 60);
+
+		
 		for (Line v: aretes)
 			v.draw(g2d);
 		
@@ -121,8 +134,8 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener, M
 	public void mousePressed(MouseEvent e) {
 		
 		PieceTrioker piece = getPieceTriokerSelected(e.getX(), e.getY());
-        
-		if (piece == null)
+
+        if (piece == null)
         	return;
 		
 		if (SwingUtilities.isLeftMouseButton(e)) {
@@ -139,6 +152,7 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener, M
 		if (this.draggedPieceTrioker != null) {
 			this.newLocation = new Point(e.getX(), e.getY());
 			this.deplacerPieceTrioker();
+			logPos = "(" + e.getX() + ", " + e.getY() + ")";
 			repaint();
 		}
 	}
@@ -165,9 +179,9 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener, M
         int notches = e.getWheelRotation();
         
         if (notches < 0) // up
-        	piece.rotate(5);
+        	piece.rotate(10);
         else if (notches > 0) // down
-        	piece.rotate(-5);
+        	piece.rotate(-10);
         
         repaint();
     }
@@ -182,39 +196,89 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener, M
 		for (Point pt : points) {
 			snap(p, pt, dist);
 		}
-		
+		/*
 		for (PieceTrioker pi : pieces) {
-			snap(p, pi.up, dist);
-			snap(p, pi.left, dist);
-			snap(p, pi.right, dist);
+			if (pi != p) {
+				snap(p, pi.up, dist);
+				snap(p, pi.left, dist);
+				snap(p, pi.right, dist);
+			}
 		}
+		*/
 	}
 	
 	private boolean snap(PieceTrioker pi, Point pt, double dist) {
+		
 		if (near(pi.up, pt, dist)) {
 			pi.translate(new Vector(pi.up, pt));
+			snapToNearest(pi, pi.up, pi.left, pi.right);
 			return true;
 		} else if (near(pi.left, pt, dist)) {
 			pi.translate(new Vector(pi.left, pt));
+			snapToNearest(pi, pi.left, pi.right, pi.up);
 			return true;
 		} else if (near(pi.right, pt, dist)) {
 			pi.translate(new Vector(pi.right, pt));
+			snapToNearest(pi, pi.right, pi.left, pi.up);
 			return true;
 		} else {
 			return false;
 		}
 	}
 
+	/* Renvoie le point qui est le plus proche d'un autre point */
+	private void snapToNearest(PieceTrioker p, Point fixed, Point a, Point b) {
+		
+		Point pieceSummit = new Point(0,0);
+		Point nearest = new Point(0,0);
+		double minDist = 1000000000;
+		
+		for (Point pt : points) {
+									
+			double currentDistA = Point.distance(a, pt);
+			double currentDistB = Point.distance(b, pt);
+				
+			if (currentDistA < minDist && !pt.eq(fixed) && !pt.eq(a) && !pt.eq(b)) {
+				minDist = currentDistA;
+				pieceSummit = a;
+				nearest = pt;
+			}
+				
+			if (currentDistB < minDist && !pt.eq(fixed) && !pt.eq(a) && !pt.eq(b)) {
+				minDist = currentDistB;
+				pieceSummit = b;
+				nearest = pt;
+			}
+			
+		}
+
+		Vector v1 = new Vector(fixed, pieceSummit);
+		Vector v2 = new Vector(fixed, nearest);
+
+		double angle = v1.angle(v2);
+		
+		if (pieceSummit.y < nearest.y)
+			angle = -angle;
+		
+		logPiece = "up : " + p.up.toString() + ", left : " + p.left.toString() + ", right : " + p.right.toString();
+		logSnap = "summit : " + pieceSummit.toString() + ", nearest : " + nearest.toString() + ", angle : " + angle + ", v1 : " + v1.toString() + ", v2 : " + v2.toString();
+		
+		if (Point.distance(pieceSummit, nearest) < 10)
+			return;
+		
+		p.rotate(angle, fixed);
+	}
+
 	private boolean near(Point a, Point b, double dist) {
 		return (a.x <= b.x + dist) && (a.x >= b.x - dist) && 
 				(a.y <= b.y + dist) && (a.y >= b.y - dist);
 	}
-	
+	/*
 	private boolean lineMatch(Line a, int aLabelFrom, int aLabelTo, Line b, int bLabelFrom, int bLabelTo, double dist) {
 		return (near(a.from, b.from, dist) && near(a.to, b.to, dist) && aLabelFrom == bLabelFrom && aLabelTo == bLabelTo) ||
 				(near(a.from, b.to, dist) && near(a.to, b.from, dist) && aLabelFrom == bLabelTo && aLabelTo == bLabelFrom);
 	}
-	
+	*/
 	//private nbMatchNeeded
 	/*
 	// Si on a assez de ligne qui match avec l

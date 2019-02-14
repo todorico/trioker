@@ -29,6 +29,10 @@ public class Point {
 		return this;
 	}
 	
+	public String toString() {
+		return "(" + x + ", " + y + ")";
+	}
+	
 	public void draw(Graphics2D g) {
 		int midWidth = 5;
 		g.setColor(Couleur.fg);
@@ -38,6 +42,10 @@ public class Point {
 	public void draw(Graphics2D g, int midWidth) {
 		g.setColor(Couleur.fg);
 		g.fill(new Ellipse2D.Double(this.x - midWidth, this.y - midWidth, 2 * midWidth, 2 * midWidth));
+	}
+	
+	public boolean eq(Point p) {
+		return this.x == p.x && this.y == p.y;
 	}
 	
 	public static Point rotation(Point p, Point center, double angle) {
