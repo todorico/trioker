@@ -1,4 +1,4 @@
-package utils.go;
+package TP1.utils.go;
 
 import java.awt.Graphics2D;
 

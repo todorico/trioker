@@ -1,4 +1,4 @@
-package utils.aff;
+package TP1.utils.aff;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -7,20 +7,20 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import utils.go.PieceTrioker;
-import utils.go.Vector;
-import utils.go.Point;
-import utils.go.Line;
-import utils.io.ReadWritePoint;
+import TP1.utils.go.Line;
+import TP1.utils.go.PieceTrioker;
+import TP1.utils.go.Point;
+import TP1.utils.go.Vector;
+import TP1.utils.io.ReadWritePoint;
 
 
 public class Vue extends JPanel implements MouseListener, MouseMotionListener, MouseWheelListener{

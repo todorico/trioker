@@ -1,9 +1,6 @@
-package utils.go;
+package TP1.utils.go;
 
-import java.util.*;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.geom.Ellipse2D;
 
 public class TriangleEqui {
 	

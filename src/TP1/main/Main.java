@@ -1,4 +1,4 @@
-package main;
+package TP1.main;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,12 +6,10 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 
-import utils.aff.Couleur;
-import utils.aff.Vue;
-import utils.go.PieceTrioker;
-import utils.go.TriangleEqui;
-import utils.go.Point;
-import utils.go.Vector;
+import TP1.utils.aff.Couleur;
+import TP1.utils.aff.Vue;
+import TP1.utils.go.PieceTrioker;
+import TP1.utils.go.Point;
 
 public class Main {
 	

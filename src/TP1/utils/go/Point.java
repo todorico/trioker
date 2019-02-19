@@ -1,11 +1,9 @@
-package utils.go;
-
-import java.lang.Math.*;
-
-import utils.aff.Couleur;
+package TP1.utils.go;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Ellipse2D;
+
+import TP1.utils.aff.Couleur;
 
 public class Point {
 
