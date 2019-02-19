@@ -106,24 +106,21 @@ public class Vue extends JPanel implements MouseWheelListener, MouseListener, Ac
 	
 	public void algoJarvis() {
 		
-		this.envConv.clear();
-		
-		// 1Ã¨re Ã©tape : Trouver [a0, b0]
-		PointVisible A0 = this.getPointMinXY();
-		PointVisible B0 = this.getPointMinFromPoint(A0);
-		this.envConv.add(A0);
-		this.envConv.add(B0);
-		
-		// 2Ã¨me Ã©tape : A partir d'un segment [ai, bi] trouver le point bi+1
-		PointVisible Bi = B0;
-		
-		PointVisible Ai1;
-		PointVisible Bi1;
-		do {
-			Ai1 = Bi;
-			Bi1 = this.getPointMinFromPoint(Ai1);
-			this.envConv.add(Bi1);
-		} while (!Bi1.equals(A0));
+        this.envConv = new ArrayList<>(this.points.size());
+        
+        /** Etape 1 : récupération du point tel que ses coords X et Y son,t les plus faibles (i.e. le plus en haut à gauche de l'écran) **/
+        PointVisible A0 = this.getPointMinXY();
+        this.envConv.add(A0);
+        
+        /** Etape 2 : On calcule le point suivant tant que != A0 **/
+        PointVisible Ai = A0;
+        PointVisible Bi;
+        
+        do{
+        	Bi = this.getNextPoint(Ai);
+            this.envConv.add(Bi);
+            Ai = Bi;
+        }while (!Bi.equals(A0));
 		
 	}
 
@@ -136,43 +133,31 @@ public class Vue extends JPanel implements MouseWheelListener, MouseListener, Ac
 		return toReturn;
 	}
 	
-	private PointVisible getPointMinFromPoint(PointVisible depart) {
+	private PointVisible getNextPoint(PointVisible Ai) {
 		
-		for (int j = 0; j < this.points.size(); j++) {
-			PointVisible Bi = this.points.get(j);
+		//On récupère le point suivant dans la liste
+		//Permet le calcul du determinant selon un point au hasard
+		//Ce point Sera certainement modifié dans la boucle suivante
+		
+		int q = (this.points.indexOf(Ai) + 1) % this.points.size();
+		PointVisible qTemp = this.points.get(q);
+		
+		//Pour tout les points, on regarde si c'est un tour droit
+		for (int i = 0; i < this.points.size(); i++) {
+			PointVisible iTemp = this.points.get(i);
 			
-			boolean tourGauche = true;
-			if (this.determinant(depart, depart, Bi) < 0)
-				tourGauche = false;
-			
-			boolean testTour = true;
-			
-			for (int k = 1; k < this.points.size(); k++) {
-				PointVisible Pi = this.points.get(k);
-				
-				if (Pi.equals(depart) || Pi.equals(Bi))
-					continue;
-				
-				int resultat = this.determinant(Pi, depart, Bi);
-				
-				if ( (tourGauche && resultat < 0) || (!tourGauche && resultat >= 0)) {
-					testTour = false;
-					break;
-				}
-					
-			}
-			
-			if (testTour)
-				return Bi;
-			
+			if (determinant(Ai, iTemp, qTemp) < 0)
+				qTemp = iTemp;
 		}
-		return null;
+		
+		return qTemp;
+         
 	}
 
 	
 
 	// initialisation random
-	// NB: l'initialisation dans disque est ï¿½ faire (exercice 1)
+	// NB: l'initialisation dans disque est à faire (exercice 1)
 	public void initPoints(int n, int r, int x, int y){
 		int xp, yp;
 		points = new ArrayList<PointVisible>();
@@ -186,7 +171,7 @@ public class Vue extends JPanel implements MouseWheelListener, MouseListener, Ac
 		this.algoJarvis();
 	}
 
-	// mï¿½thode utilitaire 
+	// méthode utilitaire 
 	// retourne un entier compris entre xmin et xmax
 	int random(int xmin,int xmax){
 		double dr = Math.random() * (double) (xmax - xmin) + (double) xmin;
