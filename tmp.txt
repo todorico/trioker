@@ -1,0 +1,10 @@
+375;723;Point 4
+777;266;Point 9
+668;312;Point 5
+661;191;Point 8
+521;289;Point 1
+536;195;Point 3
+451;174;Point 6
+351;248;Point 0
+175;14;Point 2
+188;78;Point 7

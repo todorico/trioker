@@ -1,5 +1,8 @@
 package TP2.utils.affichage;
 
+import java.util.Comparator;
+import java.util.Stack;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -30,31 +33,75 @@ public class Vue extends JPanel implements MouseWheelListener, MouseListener, Ac
 	int width;
 	ArrayList<PointVisible> points = new ArrayList<PointVisible>();
 	
-	//algoDemiPlan
 	ArrayList<Vecteur> segments = new ArrayList<Vecteur>();
 	
-	//algoJarvis
-	ArrayList<PointVisible> envConv = new ArrayList<PointVisible>();
-
 	// n : le nombre de lignes
 	// width, height : largeur, hauteur de la fenï¿½tre
 	public Vue(int n, int width) {
 		super();
+		
 		JButton b1 = new JButton("Enregistrer");
 		b1.setActionCommand("b1");
 		b1.addActionListener(this);
+		
 		JButton b2 = new JButton("Charger");
 		b2.addActionListener(this);
+		
+		JButton b0 = new JButton("clear");
+		b0.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				segments.clear();
+				repaint();
+			}
+		});		
+		
+		JButton b3 = new JButton("demi-plan");
+		b3.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				algoDemiPlans();
+				repaint();
+			}
+		});
+		
+		JButton b4 = new JButton("jarvis");
+		b4.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				algoJarvis();
+				repaint();
+			}
+		});
+		
+		JButton b5 = new JButton("graham");
+		b5.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				algoGraham();
+				repaint();
+			}
+		});
+		
 		Box b = Box.createHorizontalBox();
 		b.add(b1);
 		b.add(Box.createHorizontalStrut(10));
 		b.add(b2);
+		b.add(b0);
+		b.add(b3);
+		b.add(b4);
+		b.add(b5);
+
 		add(b);
+		
 		setBackground(bgColor);
 		this.width = width;
 		setPreferredSize(new Dimension(width, width));
+		
 		System.out.println("initialisation avec n = "+n);
+		
 		initPoints(n, (width - 100)/2 , width/2, width/2);
+		
 		addMouseListener(this);
 		addMouseWheelListener(this);
 	}
@@ -106,22 +153,99 @@ public class Vue extends JPanel implements MouseWheelListener, MouseListener, Ac
 	
 	public void algoJarvis() {
 		
-        this.envConv = new ArrayList<>(this.points.size());
+        this.segments.clear();
         
-        /** Etape 1 : récupération du point tel que ses coords X et Y son,t les plus faibles (i.e. le plus en haut à gauche de l'écran) **/
+        /** Etape 1 : rï¿½cupï¿½ration du point tel que ses coords X et Y son,t les plus faibles (i.e. le plus en haut ï¿½ gauche de l'ï¿½cran) **/
         PointVisible A0 = this.getPointMinXY();
-        this.envConv.add(A0);
         
         /** Etape 2 : On calcule le point suivant tant que != A0 **/
         PointVisible Ai = A0;
         PointVisible Bi;
         
-        do{
+        do {
         	Bi = this.getNextPoint(Ai);
-            this.envConv.add(Bi);
+            this.segments.add(new Vecteur(Ai, Bi));
             Ai = Bi;
-        }while (!Bi.equals(A0));
+        } while (!Bi.equals(A0));
 		
+	}
+	
+	public PointVisible getPivot() {
+		PointVisible toReturn = new PointVisible(Integer.MAX_VALUE, 0);
+		for (PointVisible p : points) {
+			if (p.y > toReturn.y || p.y == toReturn.y && p.x < toReturn.x)
+				toReturn = p;
+		}
+		return toReturn;
+	}
+	
+	public void algoGraham() {
+        this.segments.clear();
+
+		PointVisible pivot = getPivot();
+		
+		System.out.println("Pivot : " + pivot.getLabel());
+
+		this.points.remove(pivot);
+		
+		// Comparaison de l'angle par rapport au pivot
+		
+		Comparator<PointVisible> angleComparator = new Comparator<PointVisible>() {
+			public int compare(PointVisible p1, PointVisible p2) {
+				
+				// Vecteurs entre le pivot et les points
+				
+				double vPivotP1X = (long)p1.x - pivot.x;
+				double vPivotP1Y = (long)p1.y - pivot.y;
+				
+				double vPivotP2X = (long)p2.x - pivot.x;
+				double vPivotP2Y = (long)p2.y - pivot.y;
+				
+				double anglePivotP1 = Math.atan2(-vPivotP1Y, vPivotP1X);
+				double anglePivotP2 = Math.atan2(-vPivotP2Y, vPivotP2X);
+				
+				if (anglePivotP1 < anglePivotP2)
+					return -1;
+				else if (anglePivotP2 > anglePivotP2)
+					return 1;
+		
+				return 0;
+			}
+		};
+		
+		this.points.sort(angleComparator);
+		this.points.add(0, pivot);
+		
+		Stack<PointVisible> parcours = new Stack<>();
+		parcours.push(this.points.get(0));
+		parcours.push(this.points.get(1));
+		
+		// Creation du parcours
+		
+		for (int i = 2 ; i < this.points.size() ; ++i) {
+			//determinant > 0 -> points[i] a droite du segment
+			
+			PointVisible summit = parcours.pop();
+			PointVisible second = parcours.peek();
+			parcours.push(summit);
+			
+			while (parcours.size() >= 2 && determinant(this.points.get(i), second, parcours.peek()) > 0) {
+				parcours.pop();
+			}
+			
+			parcours.push(this.points.get(i));
+		}
+		
+		// Creation des segments de l'envellope convexe
+		
+		//System.out.println("Taille parcours : " + parcours.size());
+		
+		for (int i = 0 ; i < parcours.size()-1 ; ++i) {
+			this.segments.add(new Vecteur(parcours.get(i), parcours.get(i+1)));
+		}
+		
+		if (parcours.size() >= 2)
+			this.segments.add(new Vecteur(parcours.get(parcours.size()-1), parcours.get(0)));		
 	}
 
 	private PointVisible getPointMinXY() {
@@ -135,9 +259,9 @@ public class Vue extends JPanel implements MouseWheelListener, MouseListener, Ac
 	
 	private PointVisible getNextPoint(PointVisible Ai) {
 		
-		//On récupère le point suivant dans la liste
+		//On rï¿½cupï¿½re le point suivant dans la liste
 		//Permet le calcul du determinant selon un point au hasard
-		//Ce point Sera certainement modifié dans la boucle suivante
+		//Ce point Sera certainement modifiï¿½ dans la boucle suivante
 		
 		int q = (this.points.indexOf(Ai) + 1) % this.points.size();
 		PointVisible qTemp = this.points.get(q);
@@ -151,27 +275,28 @@ public class Vue extends JPanel implements MouseWheelListener, MouseListener, Ac
 		}
 		
 		return qTemp;
-         
 	}
 
 	
 
 	// initialisation random
-	// NB: l'initialisation dans disque est à faire (exercice 1)
+	// NB: l'initialisation dans disque est ï¿½ faire (exercice 1)
 	public void initPoints(int n, int r, int x, int y){
 		int xp, yp;
 		points = new ArrayList<PointVisible>();
+		
 		for (int i = 0; i <n; i++){
 			xp = random(0, width);
 			yp = random(0, width);
 			points.add(new PointVisible(xp,  yp));
 			points.get(i).setLabel("Point "+i);
 		}
-		//this.algoDemiPlans();
-		this.algoJarvis();
+		this.algoDemiPlans();
+		//this.algoJarvis();
+		//this.algoGraham();
 	}
 
-	// méthode utilitaire 
+	// mï¿½thode utilitaire 
 	// retourne un entier compris entre xmin et xmax
 	int random(int xmin,int xmax){
 		double dr = Math.random() * (double) (xmax - xmin) + (double) xmin;
@@ -189,16 +314,8 @@ public class Vue extends JPanel implements MouseWheelListener, MouseListener, Ac
 		for (PointVisible p: points)
 			p.dessine(g2d);
 		
-		// algoDemiPlans
 		for (Vecteur v : segments)
 			v.dessine(g2d);
-		
-		// algoJarvis
-		for (int i = 0; i < this.envConv.size() - 1; i++) {
-			Vecteur v = new Vecteur(this.envConv.get(i), this.envConv.get(i+1));
-			v.dessine(g2d);
-		}
-		
 	}
 
 	@Override
@@ -229,6 +346,7 @@ public class Vue extends JPanel implements MouseWheelListener, MouseListener, Ac
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 	}
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String testFile = "tmp.txt";
@@ -243,11 +361,12 @@ public class Vue extends JPanel implements MouseWheelListener, MouseListener, Ac
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
-		}else{
+		} else {
 			initFromFile(testFile);
 			repaint();
 		}
 	}
+	
 	public void initFromFile(String f){
 		ReadWritePoint rw = new ReadWritePoint(f);
 		try {
