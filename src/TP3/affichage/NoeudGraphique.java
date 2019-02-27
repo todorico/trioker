@@ -9,7 +9,7 @@ import TP3.main.Main;
 public class NoeudGraphique {
 	
 	private static final int midWidth = 5;
-	private static int compteurRang = 1;
+	static int compteurRang;
 	
 	private String name;
 	private NoeudGraphique parent;
@@ -109,21 +109,22 @@ public class NoeudGraphique {
 		}
 	}
 	
-	public void algoOptimisePreOrdre() {
+	public void algoOptimisePreOrdre(int sommeModifierAncetre) {
 		//Parcours pr�-fixe : 2�me �tape
-		this.visiteN_AlgoOptimise_PreOrdre();
+		this.visiteN_AlgoOptimise_PreOrdre(this.modifier + sommeModifierAncetre);
 		
 		if (this.hasFilsGauche())
-			this.filsGauche.algoOptimisePreOrdre();
+			this.filsGauche.algoOptimisePreOrdre(this.modifier + sommeModifierAncetre);
 		
 		if (this.hasFilsDroit())
-			this.filsDroit.algoOptimisePreOrdre();
+			this.filsDroit.algoOptimisePreOrdre(this.modifier + sommeModifierAncetre);
 
 	}
 	
 	//Visite N PreOrdre
-	private void visiteN_AlgoOptimise_PreOrdre() {
-		//TODO: remplir
+	private void visiteN_AlgoOptimise_PreOrdre(int sommeModifierAncetre) {
+		this.x = this.xprelim + sommeModifierAncetre + Main.PANEL_WIDTH/2;
+		this.y = this.profondeur * VueGraphique.ESPY + Main.PANEL_HEIGHT/2;
 	}
 	
 	
