@@ -20,7 +20,7 @@ public class Main extends JPanel {
 		NoeudGraphique a = new NoeudGraphique("A");
 		VueGraphique vue = new VueGraphique(a);
 		
-		//Toujours ajouter les fils APRES avoir ajouté le père au précédents
+		//Toujours ajouter les fils APRES avoir ajoutï¿½ le pï¿½re au prï¿½cï¿½dents
 		NoeudGraphique b = new NoeudGraphique("B");
 		NoeudGraphique c = new NoeudGraphique("C");
 		a.setFilsGauche(b);
@@ -41,8 +41,8 @@ public class Main extends JPanel {
 		d.setFilsGauche(h);
 		d.setFilsDroit(i);
 		
-		//Pour calculer les coordonnées
-		vue.algoSimple(9, VueGraphique.AFFICHAGE_CIRCULAIRE);
+		//Pour calculer les coordonnï¿½es
+		vue.algoSimple(9, VueGraphique.AFFICHAGE_VERTICAL);
 		//vue.algoOptimise();
 		
 		JFrame frame = new JFrame("Arbres binaires");

@@ -57,7 +57,7 @@ public class NoeudGraphique {
 		NoeudGraphique.compteurRang++;
 		
 		switch (type) {
-			case VueGraphique.AFFICHAGE_VERTICAL: // = Horizontal avec x et y inversés
+			case VueGraphique.AFFICHAGE_VERTICAL: // = Horizontal avec x et y inversï¿½s
 				this.y = this.rang * VueGraphique.ESPX;
 				this.x = this.profondeur * VueGraphique.ESPY;
 				break;
@@ -80,30 +80,19 @@ public class NoeudGraphique {
 
 	/**** ALGO OPTIMISE ****/
 	public void algoOptimisePostOrdre() {
-		//Parcours post-fixe : 1ère étape
+		//Parcours post-fixe : 1ï¿½re ï¿½tape
 		if (this.hasFilsGauche())
 			this.filsGauche.algoOptimisePostOrdre();
 		
 		if (this.hasFilsDroit())
 			this.filsDroit.algoOptimisePostOrdre();
-		
-		this.visiteN_AlgoOptimise();
-	}
-	
-	public void algoOptimisePreOrdre() {
-		//Parcours pré-fixe : 2ème étape
-		this.visiteN_AlgoOptimise();
-		
-		if (this.hasFilsGauche())
-			this.filsGauche.algoOptimisePreOrdre();
-		
-		if (this.hasFilsDroit())
-			this.filsDroit.algoOptimisePreOrdre();
 
+		this.y = this.rang * VueGraphique.ESPX;
+		this.visiteN_AlgoOptimise_PostOrdre();
 	}
 	
-	//Visite N
-	private void visiteN_AlgoOptimise() {
+	//Visite N PostOrdre
+	private void visiteN_AlgoOptimise_PostOrdre() {
 
 		if (this.hasFrereGauche()) {
 			this.xprelim = this.xprelimFrereGauche() + NoeudGraphique.tailleNoeud + NoeudGraphique.espInterNoeuds;
@@ -119,6 +108,25 @@ public class NoeudGraphique {
 			this.modifier = 0;
 		}
 	}
+	
+	public void algoOptimisePreOrdre() {
+		//Parcours prï¿½-fixe : 2ï¿½me ï¿½tape
+		this.visiteN_AlgoOptimise_PreOrdre();
+		
+		if (this.hasFilsGauche())
+			this.filsGauche.algoOptimisePreOrdre();
+		
+		if (this.hasFilsDroit())
+			this.filsDroit.algoOptimisePreOrdre();
+
+	}
+	
+	//Visite N PreOrdre
+	private void visiteN_AlgoOptimise_PreOrdre() {
+		//TODO: remplir
+	}
+	
+	
 
 	private NoeudGraphique getFirstChild() {
 		return this.filsGauche;
