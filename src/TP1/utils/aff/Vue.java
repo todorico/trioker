@@ -213,14 +213,17 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener, M
 			pi.translate(new Vector(pi.up, pt));
 			snapToNearest(pi, pi.up, pi.left, pi.right);
 			return true;
+			
 		} else if (near(pi.left, pt, dist)) {
 			pi.translate(new Vector(pi.left, pt));
 			snapToNearest(pi, pi.left, pi.right, pi.up);
 			return true;
+			
 		} else if (near(pi.right, pt, dist)) {
 			pi.translate(new Vector(pi.right, pt));
 			snapToNearest(pi, pi.right, pi.left, pi.up);
 			return true;
+			
 		} else {
 			return false;
 		}
@@ -231,7 +234,7 @@ public class Vue extends JPanel implements MouseListener, MouseMotionListener, M
 		
 		Point pieceSummit = new Point(0,0);
 		Point nearest = new Point(0,0);
-		double minDist = 1000000000;
+		double minDist = 1000000000; //1 MILLIARD
 		
 		for (Point pt : points) {
 									

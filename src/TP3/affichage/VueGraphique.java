@@ -11,22 +11,24 @@ import TP3.couleurs.Couleur;
 @SuppressWarnings("serial")
 public class VueGraphique extends JPanel {
 	
-	public static final int AFFICHAGE_HORIZONTAL = 0;
-	public static final int AFFICHAGE_VERTICAL = 1;
-	public static final int AFFICHAGE_CIRCULAIRE = 2;
+	public static final int AFFICHAGE_HORIZONTAL = 1;
+	public static final int AFFICHAGE_VERTICAL = 2;
+	public static final int AFFICHAGE_CIRCULAIRE = 3;
 	
 	public static final int ESPX = 50;
 	public static final int ESPY = 40;
 
 	private NoeudGraphique racine;
+	private int typeAffichage;
 	
 	public VueGraphique() {
 		super();
+		typeAffichage = VueGraphique.AFFICHAGE_HORIZONTAL;
 		this.racine = null;
 	}
 
 	public VueGraphique(NoeudGraphique racine) {
-		super();
+		this();
 		this.setRacine(racine);
 	}
 	
@@ -40,15 +42,16 @@ public class VueGraphique extends JPanel {
 		return this.racine;
 	}
 	
-	//Appel de départ algo simple
-	public void algoSimple(int nbNoeuds, int type) {
-		this.racine.algoSimple(nbNoeuds, type);
+	//Appel de dï¿½part algo simple
+	public void algoSimple(int nbNoeuds) {
+		NoeudGraphique.compteurRang = 1;
+		this.racine.algoSimple(nbNoeuds, typeAffichage);
 	}
 	
-	//Appel de départ algo optimisé
+	//Appel de dï¿½part algo optimisï¿½
 	public void algoOptimise() {
 		this.racine.algoOptimisePostOrdre(); //Etape 1
-		this.racine.algoOptimisePreOrdre(); //Etape 2
+		this.racine.algoOptimisePreOrdre(0); //Etape 2
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -60,6 +63,10 @@ public class VueGraphique extends JPanel {
 		g2d.setColor(Couleur.bg);
 		
 		racine.dessine(g2d);
+	}
+
+	public void setAffichage(int affichageHorizontal) {
+		this.typeAffichage = affichageHorizontal;
 	}
 	
 }
