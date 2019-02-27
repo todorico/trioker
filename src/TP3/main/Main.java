@@ -41,11 +41,17 @@ public class Main extends JPanel {
 		d.setFilsGauche(h);
 		d.setFilsDroit(i);
 		
+		NoeudGraphique j = new NoeudGraphique("j");
+		NoeudGraphique k = new NoeudGraphique("k");
+		e.setFilsGauche(j);
+		e.setFilsDroit(k);
+		
 		//Pour calculer les coordonn�es
-		vue.algoSimple(9, VueGraphique.AFFICHAGE_VERTICAL);
+		vue.algoSimple(11, VueGraphique.AFFICHAGE_CIRCULAIRE);
 		//vue.algoOptimise();
 		
 		JFrame frame = new JFrame("Arbres binaires");
+		
 		frame.add(vue, BorderLayout.CENTER);
 		frame.setSize(PANEL_WIDTH, PANEL_HEIGHT);
 		frame.setVisible(true);

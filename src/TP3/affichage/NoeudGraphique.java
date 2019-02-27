@@ -160,7 +160,7 @@ public class NoeudGraphique {
 		}
 		
 		FontMetrics fm = g.getFontMetrics();
-		int h = fm.getHeight();
+		int h = fm.getHeight() + midWidth / 2;
 		int w = fm.stringWidth(name) + 2*midWidth;
 		
 		int c = x - w/2;
